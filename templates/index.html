@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                Chat Bot
+            </div>
+            <button class="new-chat-btn" onclick="newChat()">
+                + New Chat
+            </button>
+            <div class="chat-history"></div>
+            <div class="sidebar-footer">
+                Chat History Coming Soon
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="messages-container" id="messages">
+                <div class="initial-message">
+                    <h2 style="font-size: 2em;">Chat Bot</h2>
+                    <p>Start a conversation. Ask anything about WSC policy!</p>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <div class="input-box">
+                        <input type="text" id="queryInput" placeholder="Type your message..." />
+                    </div>
+                    <button class="send-btn" id="sendBtn"  onclick="sendQuery()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script src="../static/script.js"></script>
+</html>

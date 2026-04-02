@@ -59,10 +59,10 @@ function sendQuery() {
         errorMsg.className = "message error";
         errorMsg.textContent = "Error:  " + data.error;
         botGroup.appendChild(errorMsg);
-      } else if (data.docs && data.docs.length > 0) {
+      } else if (data.answer) {
         const botMsg = document.createElement("div");
         botMsg.className = "message bot";
-        botMsg.textContent = data.docs[0];
+        botMsg.textContent = data.answer;
         botGroup.appendChild(botMsg);
       } else {
         const botMsg = document.createElement("div");

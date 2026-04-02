@@ -1,4 +1,5 @@
-pandas
 flask
+openai
 chromadb
+python-dotenv
 sentence-transformers

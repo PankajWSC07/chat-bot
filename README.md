@@ -31,11 +31,11 @@ UI Display
 
 ```
 Server/
-├── main.py                 # Flask backend & API endpoints
+├── main.py                # Flask backend & API endpoints
 ├── Chroma.py              # Vector database operations
 ├── Chat_filter.py         # AI-powered answer refinement
 ├── requirement.txt        # Python dependencies
-├── README.md             # This file
+├── README.md              # This file readme file
 ├── data/
 │   ├── Contact.csv       # Contact information
 │   └── data.txt          # Knowledge base content
@@ -51,23 +51,23 @@ Server/
 ##  Setup & Installation
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.8 or higher (download from https://www.python.org/downloads/)
 - pip package manager
 - Groq API key (get it from https://console.groq.com)
 
 ### step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/chat-bot.git
+git clone https://github.com/PankajWSC07/chat-bot.git
 cd chat-bot/Server
 ```
 
-### step 2: Create Virtual Environment (Optional but Recommended)
+### step 2: Create Virtual Environment
 
 ```bash
-python -m venv venv
-source venv/bin/activate  
-venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate   on macOS/Linux
+.venv\Scripts\activate      on Windows
 ```
 
 ### Step 3: Install Dependencies
@@ -84,7 +84,7 @@ Create a `.env` file in the Server directory:
 GROQ_API_KEY=your_groq_api_key_here
 ```
 
-### Step 3: Prepare Knowledge Base
+### Step 5: Prepare Knowledge Base
 
 Ensure `data/data.txt` contains your knowledge base content. The system will:
 - Split content into paragraphs
@@ -209,13 +209,8 @@ To improve the system:
 
 ##  License
 
-any one can use
+anyone can use
 
 ##  Author
 
 develop by devloper
-
----
-
-**Last Updated**: April 2, 2026
-**Version**: 1.0.0

@@ -1,0 +1,7 @@
+flask
+python-dotenv
+langchain
+chromadb
+sentence-transformers 
+pandas
+langchain_community

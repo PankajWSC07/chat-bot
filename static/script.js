@@ -59,10 +59,10 @@ function sendQuery() {
         errorMsg.className = "message error";
         errorMsg.textContent = "Error:  " + data.error;
         botGroup.appendChild(errorMsg);
-      } else if (data.results) {
+      } else if (data.answer) {
         const botMsg = document.createElement("div");
         botMsg.className = "message bot";
-        botMsg.textContent = data.results;
+        botMsg.innerHTML = data.answer.replace(/\n/g, "<br>");
         botGroup.appendChild(botMsg);
       } else {
         const botMsg = document.createElement("div");
@@ -102,16 +102,16 @@ function newChat() {
   document.getElementById("queryInput").focus();
 }
 
-function setupShortcut() {
+function newChatShortcut() {
   document.addEventListener("keydown", function (event) {
-    event.preventDefault();
     if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "o") {
+      event.preventDefault();
       newChat();
     }
   });
 }
 
-// setupShortcut();
+newChatShortcut();
 
 function escapeHtml(text) {
   const map = {

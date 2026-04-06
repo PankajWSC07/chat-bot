@@ -1,67 +1,120 @@
 import os
-
+import re
 from langchain_community.document_loaders import TextLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_core.documents import Document
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 
-print("Loading data...")
 
-documents = []
-file_path = "data/data.txt"
+def load_chunk(file_path):
+    print("Loading data...")
 
+    if not os.path.exists(file_path):
+        print("No data file found")
+        return []
 
-if os.path.exists(file_path):
     loader = TextLoader(file_path, encoding="utf-8")
-    documents.extend(loader.load())
+    documents = loader.load()
 
-if not documents or len(documents) == 0:
-    print("No data file found")
-    exit()
+    print(f"Loaded {len(documents)} document(s)")
 
-print(f"Loaded {len(documents)} documents")
+    chunks = []
+
+    for doc in documents:
+        paragraphs = doc.page_content.split("\n\n")
+
+        for para in paragraphs:
+            para = para.strip()
+
+            if para:
+                chunks.append(Document(page_content=para))
+
+    print(f"Created {len(chunks)} paragraph chunks")
+
+    return chunks
 
 
-splitter = RecursiveCharacterTextSplitter(separators='\n\n')
+def create_vector_db(chunks):
+    if not chunks:
+        print("No chunks to store")
+        return None
 
-chunks = splitter.split_documents(documents)
+    print("\nCreating embeddings...")
 
-if not chunks:
-    print("no chunk found")
-    exit()
+    embedding = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
-print(f"Splitting into {len(chunks)} chunks...")
+    print("Storing in ChromaDB...")
 
-print("Creating embeddings...")
+    db = Chroma.from_documents(
+        documents=chunks, embedding=embedding, persist_directory="chroma_db"
+    )
 
-embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    db.persist()
 
-print("Storing in ChromaDB...")
+    print("Stored successfully!")
+    return db
 
-db = Chroma.from_documents(chunks, embedding, persist_directory="chroma_db")
 
-db.persist()
-
-print("Stored successfully!")
-
-print("\nTesting retrieval...")
-
-while True:
-    query = input("\nEnter a query (or 'exit' to quit): ")
-    if len(query.strip()) == 0:
-        print("Enter the valide query")
-        continue
-        
-    if query.lower() == "exit":
-        print("Goodbye")
-        break
+def initialize_db():
+    FILE_PATH = "data/data.txt"
+    chunks = load_chunk(FILE_PATH)
     
-    retriever = db.as_retriever(search_kwargs={"k": 2})
+    if not chunks:
+        return None
+    
+    db = create_vector_db(chunks)
+    return db
+
+
+def get_retriever(db):
+    if db is None:
+        return None
+
+    return db.as_retriever(search_kwargs={"k": 3})
+
+
+def retrieve_context(query, retriever):
+    if retriever is None:
+        return []
 
     results = retriever.invoke(query)
+    return results
 
-    print(f"\nQuery: {query}")
-    print("\nTop Results:\n")
 
-    for i, doc in enumerate(results):
-        print(f"{i+1}. {doc.page_content}\n")
+if __name__ == "__main__":
+    FILE_PATH = "data/data.txt"
+
+    chunks = load_chunk(FILE_PATH)
+
+    if not chunks:
+        exit()
+
+    db = create_vector_db(chunks)
+
+    if db is None:
+        exit()
+
+    retriever = get_retriever(db)
+
+    print("\n RAG Retrieval Ready!")
+
+    while True:
+        query = input("\nEnter a query (or 'exit' to quit): ").strip()
+
+        if not query:
+            print("Enter a valid query")
+            continue
+
+        if query.lower() == "exit":
+            print("Goodbye")
+            break
+
+        results = retrieve_context(query, retriever)
+
+        print(f"\nQuery: {query}")
+        print(f"\nTop Results: {len(results)}\n")
+
+        for i, doc in enumerate(results):
+            print(f"{i+1}. {doc.page_content}\n")

@@ -65,7 +65,7 @@ def answer(query, context_docs):
             temperature=0.7,
         )
 
-        improved_answer = response.choices[0].message.content
-        return improved_answer
+        ans = response.choices[0].message.content
+        return ans
     except Exception as e:
         return f"Error improving answer: {str(e)}"

@@ -61,6 +61,7 @@ Run the Flask application:
 ```bash
 python main.py
 ```
+The application will start on `http://localhost:5000`
 
 Running in Terminal (Debug Mode)
 
@@ -68,7 +69,6 @@ Running in Terminal (Debug Mode)
 python LangChain.py
 ```
 
-The application will start on `http://localhost:5000`
 
 ## How It Works
 

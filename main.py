@@ -27,12 +27,11 @@ def query():
 
         context_docs = retrieve_context(user_query, retriever)
 
-        improved_answer = answer(user_query, context_docs)
+        ans = answer(user_query, context_docs)
 
         response = {
             "query": user_query,
-            "answer": improved_answer,
-            "source_count": len(context_docs),
+            "answer": ans
         }
         return jsonify(response)
 

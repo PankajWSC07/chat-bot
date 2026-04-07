@@ -1,7 +1,13 @@
 const messagesDiv = document.getElementById("messages");
 let isFirstMessage = true;
+let isProcessing = false;
 
 function sendQuery() {
+  if (isProcessing) {
+    alert("Please wait for the current response to complete.");
+    return;
+  }
+
   const query = document.getElementById("queryInput").value.trim();
 
   if (!query) {
@@ -12,6 +18,8 @@ function sendQuery() {
     messagesDiv.innerHTML = "";
     isFirstMessage = false;
   }
+
+  isProcessing = true;
 
   const userGroup = document.createElement("div");
   userGroup.className = "message-group user";
@@ -24,7 +32,9 @@ function sendQuery() {
   messagesDiv.appendChild(userGroup);
 
   document.getElementById("queryInput").value = "";
+  document.getElementById("queryInput").disabled = true;
   document.getElementById("sendBtn").disabled = true;
+  document.getElementById("sendBtn").textContent = "Processing...";
 
   const loadingGroup = document.createElement("div");
   loadingGroup.className = "message-group bot";
@@ -73,8 +83,12 @@ function sendQuery() {
       }
 
       messagesDiv.appendChild(botGroup);
+      document.getElementById("queryInput").disabled = false;
       document.getElementById("sendBtn").disabled = false;
+      document.getElementById("sendBtn").textContent = "Send";
+      isProcessing = false;
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      document.getElementById("queryInput").focus();
     })
     .catch((error) => {
       messagesDiv.removeChild(loadingGroup);
@@ -85,8 +99,12 @@ function sendQuery() {
       errorMsg.textContent = " Error: " + error.message;
       botGroup.appendChild(errorMsg);
       messagesDiv.appendChild(botGroup);
+      document.getElementById("queryInput").disabled = false;
       document.getElementById("sendBtn").disabled = false;
+      document.getElementById("sendBtn").textContent = "Send";
+      isProcessing = false;
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      document.getElementById("queryInput").focus();
     });
 }
 
@@ -129,7 +147,9 @@ document
   .addEventListener("keypress", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendQuery();
+      if (!isProcessing) {
+        sendQuery();
+      }
     }
   });
 

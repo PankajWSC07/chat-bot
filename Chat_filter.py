@@ -38,6 +38,8 @@ RESPONSE STYLE:
 - Format your response in a well-structured and readable manner.
 """
 
+context_memory = []
+
 
 def answer(query, context_docs):
 
@@ -66,6 +68,8 @@ def answer(query, context_docs):
         )
 
         ans = response.choices[0].message.content
+
+        context_memory.append({"query": query, "answer": ans})
         return ans
     except Exception as e:
         return f"Error improving answer: {str(e)}"

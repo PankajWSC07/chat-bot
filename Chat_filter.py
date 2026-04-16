@@ -1,12 +1,12 @@
-from openai import OpenAI
-import os
 from dotenv import load_dotenv
+from langchain_groq import ChatGroq
+from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_community.tools import DuckDuckGoSearchRun
 
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1",
+llm = ChatGroq(
+    model="llama-3.1-8b-instant", temperature=0.7, max_tokens=None, timeout=10
 )
 
 system_prompt = """
@@ -48,28 +48,26 @@ def answer(query, context_docs):
 
     context_text = "\n\n".join([doc.page_content for doc in context_docs])
 
-    user_message = f"""Based on the following context, please provide a clear and well-structured answer to the user's query.
+    user_message = f"""Based on the following context, provide a clear and structured answer.
 
     User Query: {query}
 
     Context:{context_text}
 
-    Please improve, structure, and clarify this context into a comprehensive answer."""
+    Return only the final improved answer.
+    """
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_message),
+    ]
 
     try:
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
-            max_tokens=1024,
-            temperature=0.7,
-        )
+        response = llm.invoke(messages)
 
-        ans = response.choices[0].message.content
+        ans = response.content
 
         context_memory.append({"query": query, "answer": ans})
         return ans
+
     except Exception as e:
         return f"Error improving answer: {str(e)}"
